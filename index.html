@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Svadba D a K</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>  
+</head>
+
+<body>
+<div class="container">
+  <div class="jumbotron">
+    <h1>Svadba D a K</h1>
+    <p>Dátum: 16.04.2016<br/>Miesto: Korňa</p>
+  </div>
+
+  <div class="panel-group">
+    <div class="panel panel-danger">
+      <div class="panel-heading"><span class="glyphicon glyphicon-time"></span> Do svadby zostáva:</div>
+      <div class="panel-body" id="countdown"></div>
+    </div>
+  </div>
+
+  <div class="panel-group">
+    <div class="panel panel-success">
+      <div class="panel-heading"><span class="glyphicon glyphicon-map-marker"></span> Miesto</div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div id="address" class="col-md-4">
+              <h4>Penzión Kriváň, Korňa</h4>
+              <p>Link: <a href="http://www.beskydypenzionkrivan.sk/" target="_blank">www.beskydypenzionkrivan.sk</a></p>
+              <p>Adresa: Korňa č. 509, 023 21 Korňa, Slovenská Republika</p>
+              <p>Geo: 49.411975, 18.569093</p>
+              <p>GPS: N 49° 24,762’, E 18° 34,150’</p>
+            </div>
+            <div id="map-canvas" class="col-md-8" style="height: 350px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+<script>
+  var map;
+  var weddingPlace = new google.maps.LatLng(49.411975, 18.569093);
+
+  function initialize() {
+    var mapCanvas = document.getElementById('map-canvas');
+    var mapOptions = {
+      center: weddingPlace,
+      zoom: 14,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    map = new google.maps.Map(mapCanvas, mapOptions)
+
+    var contentString = '<div id="content">'+
+                        '<p>Penzión Kriváň, Korňa</p>'+
+                        '</div>';
+
+    var infowindow = new google.maps.InfoWindow({
+        content: contentString
+    });
+
+    var marker = new google.maps.Marker({
+        position: weddingPlace,
+        map: map,
+        animation: google.maps.Animation.DROP,
+        title: 'Penzión Kriváň, Korňa'
+    });
+
+    google.maps.event.addListener(marker, 'click', function() {
+      infowindow.open(map,marker);
+    });
+  }
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+
+
+  var monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  var getMonthDays = function(year, month) {
+      return (month == 2 && year % 4 == 0) ? monthDays[month] + 1 : monthDays[month];
+  };
+
+  var formatStr = {
+      yy: ["rok", "roky", "rokov"],
+      mn: ["mesiac", "mesiace", "mesiacov"],
+      dd: ["deň", "dni", "dní"],
+      hh: ["hodina", "hodiny", "hodín"],
+      mi: ["minuta", "minúty", "minút"],
+      ss: ["sekunda", "sekundy", "sekúnd"]
+  };
+
+  var getFormatString = function(val, formatString) {
+      var ret;
+
+      if (val === 0) {
+          ret = "";
+      } else if (val === 1) {
+          ret = val + " " + formatString[0];
+      } else if (val < 5) {
+          ret = val + " " + formatString[1];
+      } else {
+          ret = val + " " + formatString[2];
+      }
+
+      return ret;
+  };
+
+  var getDateObj = function(d) {
+      return {
+          yy: d.getFullYear(),
+          mn: d.getMonth() + 1,
+          dd: d.getDate(),
+          hh: d.getHours(),
+          mi: d.getMinutes(),
+          ss: d.getSeconds()
+      };
+  };
+
+  var getDateDiff = function(date1, date2) {
+      var startDate = (date1 > date2) ? getDateObj(date2) : getDateObj(date1);
+      var endDate = (date1 <= date2) ? getDateObj(date2) : getDateObj(date1);
+
+      var diff = {
+          yy: endDate.yy - startDate.yy,
+          mn: endDate.mn - startDate.mn,
+          dd: endDate.dd - startDate.dd,
+          hh: endDate.hh - startDate.hh,
+          mi: endDate.mi - startDate.mi,
+          ss: endDate.ss - startDate.ss
+      };
+
+      if (diff.ss < 0) {
+          diff.ss += 60;
+          --diff.mi;
+      }
+      if (diff.mi < 0) {
+          diff.mi += 60;
+          --diff.hh;
+      }
+      if (diff.hh < 0) {
+          diff.hh += 24;
+          --diff.dd;
+      }
+      if (diff.dd < 0) {
+          diff.dd += getMonthDays(startDate.yy, startDate.mm);
+          --diff.mn;
+      }
+      if (diff.mn < 0) {
+          diff.mn += 12;
+          --diff.yy;
+      }
+
+      return diff;
+  };
+
+  var getWeddingCountdown = function() {
+      var weddingDate = new Date(2016, 3, 16, 15, 0, 0);
+      var currentDate = new Date();
+      var dateDiffObj = getDateDiff(weddingDate, currentDate);
+
+      var arr = [];
+      arr.push(getFormatString(dateDiffObj.yy, formatStr.yy));
+      arr.push(getFormatString(dateDiffObj.mn, formatStr.mn));
+      arr.push(getFormatString(dateDiffObj.dd, formatStr.dd));
+      arr.push(getFormatString(dateDiffObj.hh, formatStr.hh));
+      arr.push(getFormatString(dateDiffObj.mi, formatStr.mi));
+      arr.push(getFormatString(dateDiffObj.ss, formatStr.ss));
+
+      arr = arr.filter(function(d) {
+          return d;
+      });
+
+      var res;
+      var len = arr.length;
+      for (var i = 0; i < len; i++) {
+          var val = arr[i];
+
+          if (!res) {
+              res = arr[i];
+          } else if (res && (i + 1) == arr.length) {
+              res += " a " + arr[i];
+          } else {
+              res += ", " + arr[i];
+          }
+      }
+      return res;
+  };
+
+  var updateCountdown = function () {
+    document.getElementById("countdown").innerHTML = getWeddingCountdown();
+  };
+
+  updateCountdown();
+  var timeoutID = window.setInterval(updateCountdown, 1000);
+
+</script>
+
+</body>
+</html>
