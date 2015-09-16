@@ -64,7 +64,7 @@ a {
 	background-color: #FFE6E6;
 }
 
-#map-canvas {
+.map-canvas {
 	height: 350px;
 	border-style: solid;
 	border-width: 1px;
