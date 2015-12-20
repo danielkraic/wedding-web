@@ -1,7 +1,7 @@
 var monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 var getMonthDays = function(year, month) {
-    return (month == 2 && year % 4 == 0) ? monthDays[month] + 1 : monthDays[month];
+    return (month == 2 && year % 4 == 0) ? monthDays[month-1] + 1 : monthDays[month-1];
 };
 
 var formatStr = {
