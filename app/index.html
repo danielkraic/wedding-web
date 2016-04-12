@@ -25,7 +25,7 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Svadba K a D</h1>
-    <p>Zostávajúci čas: <span id="countdown"></span></p>
+    <p id="remaining">Zostávajúci čas: <span id="countdown"></span></p>
   </div>
 
   <div class="row">
@@ -47,7 +47,7 @@
     <div class="col-md-4">
       <div class="panel">
         <div class="panel-heading"><span class="glyphicon glyphicon-calendar"></span> Kedy</div>
-        <div class="panel-body">16.04.2016</div>
+        <div class="panel-body">16.04.2016 o 14:00</div>
       </div>
     </div>
 
@@ -114,6 +114,10 @@
 
     <!-- build:js({app,.tmp}) scripts/countdown.js -->
     <script src="scripts/countdown.js"></script>
+    <!-- endbuild -->
+    
+    <!-- build:js({app,.tmp}) scripts/update.js -->
+    <script src="scripts/update.js"></script>
     <!-- endbuild -->
 </body>
 </html>

@@ -127,18 +127,24 @@ class Countdown {
 	constructor(toDate: Date) {
 		this.toDate = toDate;		
 	}
+    
+    public isValid() : boolean {
+        var currentDate = new Date();
+        return currentDate < this.toDate 
+    }
 	
     public getWeddingCountdown() : string {
         var currentDate = new Date();
-        
         var diff = new DateDiff(currentDate, this.toDate);
         return diff.toString();        
     }
 }
 
+/*
+// debug only
 function printWeddingCountdown() {
-    var wc : Countdown = new Countdown(new Date(2016,4,16,15,0,0));
+    var wc : Countdown = new Countdown(new Date(2016,3,16,14,0,0));
     console.log(wc.getWeddingCountdown());
 }
-
 printWeddingCountdown();
+*/
